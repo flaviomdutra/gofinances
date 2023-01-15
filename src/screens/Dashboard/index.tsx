@@ -1,5 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ActivityIndicator } from "react-native";
+
+import { useFocusEffect, useTheme } from "@react-navigation/native";
+import { useAuth } from "../../hooks/auth";
 
 import { HighlightCard } from "../../components/HighlightCard";
 import {
@@ -24,8 +28,6 @@ import {
   LogoutButton,
   LoadContainer,
 } from "./styles";
-import { useFocusEffect, useTheme } from "@react-navigation/native";
-import { ActivityIndicator } from "react-native";
 
 export interface DataListProps extends TransactionCardProps {
   id: string;
@@ -49,6 +51,7 @@ export function Dashboard() {
   );
 
   const theme = useTheme();
+  const { user, signOut } = useAuth();
 
   function getLastTransactionDate(
     collection: DataListProps[],
@@ -172,15 +175,15 @@ export function Dashboard() {
             <UserWrapper>
               <UserInfo>
                 <Photo
-                  source={{ uri: "https://github.com/flaviomdutra.png" }}
+                  source={{ uri: user.photo }}
                 />
                 <User>
                   <UserGreeting>Olá,</UserGreeting>
-                  <UserName>Flávio</UserName>
+                  <UserName>{user.name}</UserName>
                 </User>
               </UserInfo>
 
-              <LogoutButton onPress={() => {}}>
+              <LogoutButton onPress={signOut}>
                 <Icon name="power" />
               </LogoutButton>
             </UserWrapper>
@@ -201,8 +204,8 @@ export function Dashboard() {
             />
             <HighlightCard
               type="total"
-              title={highlightData.total.amount}
-              amount="R$ 17.400,00"
+              title="Total"
+              amount={highlightData.total.amount}
               lastTransaction={highlightData.total.lastTransaction}
             />
           </HighlightCards>
